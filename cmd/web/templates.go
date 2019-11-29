@@ -1,15 +1,24 @@
 package main
 
 import (
+	"github.com/sysrex/snippetreviews/pkg/models"
 	"path/filepath"
 	"text/template"
-
-	"github.com/sysrex/snippetreviews/pkg/models"
+	"time"
 )
 
 type templateData struct {
-	Snippet  *models.Snippet
-	Snippets []*models.Snippet
+	CurrentYear int
+	Snippet     *models.Snippet
+	Snippets    []*models.Snippet
+}
+
+func humanDate(t time.Time) string {
+	return t.Format("02 Jan 2006 at 15:04")
+}
+
+var functions = template.FuncMap{
+	"humanDate": humanDate,
 }
 
 func newTemplateCache(dir string) (map[string]*template.Template, error) {
@@ -26,11 +35,13 @@ func newTemplateCache(dir string) (map[string]*template.Template, error) {
 
 	// Loop through the pages one-by-one.
 	for _, page := range pages {
+
 		// Extract the file name (like 'home.page.tmpl') from the full file path
 		// and assign it to the name variable.
 		name := filepath.Base(page)
 		// Parse the page template file in to a template set.
-		ts, err := template.ParseFiles(page)
+
+		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
 		if err != nil {
 			return nil, err
 		}
