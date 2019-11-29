@@ -5,7 +5,7 @@ import "net/http"
 func (app *application) routes() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", app.home)
-	mux.Handle("/snippet", app.showSnippet)
+	mux.HandleFunc("/snippet", app.showSnippet)
 	mux.HandleFunc("/snippet/create", app.createSnippet)
 
 	// Server static files
