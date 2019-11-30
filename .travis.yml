@@ -3,18 +3,20 @@ services:
 before_install:
 - docker login --email=$DOCKER_HUB_EMAIL --username=$DOCKER_HUB_USERNAME --password=$DOCKER_HUB_PASSWORD
 - openssl aes-256-cbc -K $encrypted_ced0c438de4d_key -iv $encrypted_ced0c438de4d_iv
- -in deploy_key.enc -out ./deploy_key -d
+  -in deploy_key.enc -out ./deploy_key -d
 - docker build -t snippetreviews .
 script:
 - docker tag snippetreviews:latest $DOCKER_HUB_USERNAME/snippetreviews:production
 - docker push $DOCKER_HUB_USERNAME/snippetreviews:production
 deploy:
- provider: script
- skip_cleanup: true
- script: chmod 600 deploy_key && ssh -o StrictHostKeyChecking=no -i ./deploy_key
-   travis@snippetreviews.com './deploy.sh'
- on:
-   branch: master
+  provider: script
+  skip_cleanup: true
+  script: chmod 600 deploy_key && ssh -o StrictHostKeyChecking=no -i ./deploy_key
+    travis@snippetreviews.com './deploy.sh'
+  on:
+    branch: master
 env:
- global:
- - secure: DCNxizK[...]pygQ=
+  global:
+  - secure: OUkmmr/ifw2AEon4ljBw+TQhdfukeXfaAT8LbOxU0pWaLudHMliiVYeq6RN9zi6yFWYapJXeTfEUktQqv4onbi6TbpengqSxKmPn0m12ka7RN38S+fIqLMiZjLwR6xlCySwL72ch45O7pH2lNccXD3X6zgSqAxSgptBxtEY5+Yn6inNI+4VsZIyxyNMZkTuF91QM6PqxHtp3wEnF3skKo9+ImSUbkCb7X0PopOLfH1uqXyePCn14GRqrBuxNo8Ve6JhBj3HOYW5sLiSbSRPRraMQaavQHvkdCokAmuLcl52xnAWyfFVBVDqFFnnpcL+WOoYJArkD65QCLw9s4v1NgpP3U2MrHxi92Ce6viOr6B1TLOhitgZjYXrxhijdE2Z/B3vJBUQ+LdoVWKJ4aRsZ+wa8ZHNvZDi22ip7FFzHIdq8r+GlT8+nRe6sLVNZ+C+SJAWodva4T9FwmSyM+FG1uHtbwBjRzizfvKI/uMerABukmEg3U1NNSNNMgFQA5VoJWsFZm4A/v/IsDUw0dQf4EAq6KuFQdKThdE+cYiXuUx3pYnqMAOBfC3basmTrytPYcK0sFLo2P2gZiXMt5czp82IqlO8I9N1VztbA3fe6HX0hHQ9/TwyAlpTmWngMrGvEdI9tssjO2Dau4pwICjp1cWuvB+h3CYudiepSksy3Edo=
+  - secure: KWufPQRILnAzCAoIZBaN1GwfSqJBYREtf0/RnuucmBHZWcItetK65Xn59YqpR/Qw3CN/zR4bJ6vBsNxvzlygbgdyY4Ne+rNHXT+NEYEp57IQPkDaC5FGXxO9ueCJa5xrypGDjbO8UC8kZoFryF7uoY2olFRswNPMQMaxc0ivX08YIghBHRtkrd1ZntytDmaxNJdM8geke0rWZXx+eTsCKKIGpOxlPFfN46o1SVUoPqicAInpaeRxhQN2SPF0YdmyBYS85JTxqDxeoLgGU5WIc9u5HeO2IPZ+upJewnzUQCXytd5wx9U/E3aWSFtw3+w0ZMwE8BwP+p9Z6BJRkNIJUgSNXpvLE7/RHxpFpxnv8H9zGLQgpHb7ItStb26Ru1+O1sFr1rclkAoVJavdu3gDm3/YXNw6loBWXu4l3AnJAxuNzD7un5zgDPj6H6ZynMT2D6fOb0PrlQLja9mmrMQyfy+YE5/5XWFYfD7VkWJW4EIGfxLl81EDhBLcDdLsca1P/r8oKPojpa6KrfqFAAfdoeQmnLsOvT5lBSAY+uhHAbXQ6fS8bRffb4P6myzPIYXB/HkgtlkgWJlLFtdEzFQJx/nKk8pAAElyuJhWcm1Fo+sT9p/G4Y8ZN7tEKDdkEeKOS16SFXdJAEy1AIcWfJrZzeZZ8YRDZso97QG3wlIV0Jc=
+  - secure: UHqIwhioiejtKCRRlO90q5PF6qpn0/wYkeCTlHGvYpXenq5cfaTWmFA34mWga+VmX+edJh8XoIArXsEF+sHziJ6r9zhCJQVypO5ju8E+oWsBgQMbMWBnGDEOnklLWYK2LvE+iDjSJuNJU+PrUrsr6+LUZYdJx1hd/FY7kYgY1kmXtTf1KP4yvfVCP+HQZLp57eZI6enJG/DWHF3OT6OCKd4xz5TaheUgNmQidU9Re+wVVHW7N0Asv7/EFQwIefKTRvdU0oGYG4kPvE+Anbv2V/ddd1Ebcvu5jmy5/aFXQNAW58sAGPlFM3916PlmZutoVdg8MWlXBiSc/QAjW1AkOjqXFGojEvQo3XXMbXsyokaT7VZ/SmhRnGg25jwye5NLy7JB93yORJnoUkBAZCi8Jt3Db8WgQ4/FI48/L8Y1cErktf3tw1Fkezl5xBgnxWE6ge0vhuwaiL5FD4J3rtcVTuB+yWJRc8bnoSDW/2OM4oiXUDLk+7Adet2H1jk+vwhht/m0M1AfyWNSC4tT3mxfqvvasZRZPzBpPW+czgltp+RlLEDgTcsvYAHwtnbxqBXMkcfm3tZ7fO6Z8M2PDM/Jm+hNvttimgdSZnZzlZV45+h1cwI+oCy481NwTEDX5sx9GA2f7VgcWh9ar8PpC/QORmCtt/ex+GmeAufBWkezS40=
