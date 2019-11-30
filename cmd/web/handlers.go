@@ -51,10 +51,7 @@ func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request
 }
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
-    // First we call r.ParseForm() which adds any data in POST request bodies
-    // to the r.PostForm map. This also works in the same way for PUT and PATCH
-    // requests. If there are any errors, we use our app.ClientError helper to send
-    // a 400 Bad Request response to the user.
+    
     err := r.ParseForm()
     if err != nil {
         app.clientError(w, http.StatusBadRequest)
