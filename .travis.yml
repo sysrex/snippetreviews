@@ -1,0 +1,20 @@
+services:
+- docker
+before_install:
+- docker login --email=$DOCKER_HUB_EMAIL --username=$DOCKER_HUB_USERNAME --password=$DOCKER_HUB_PASSWORD
+- openssl aes-256-cbc -K $encrypted_ced0c438de4d_key -iv $encrypted_ced0c438de4d_iv
+ -in deploy_key.enc -out ./deploy_key -d
+- docker build -t snippetreviews .
+script:
+- docker tag snippetreviews:latest $DOCKER_HUB_USERNAME/snippetreviews:production
+- docker push $DOCKER_HUB_USERNAME/snippetreviews:production
+deploy:
+ provider: script
+ skip_cleanup: true
+ script: chmod 600 deploy_key && ssh -o StrictHostKeyChecking=no -i ./deploy_key
+   travis@snippetreviews.com './deploy.sh'
+ on:
+   branch: master
+env:
+ global:
+ - secure: DCNxizK[...]pygQ=
