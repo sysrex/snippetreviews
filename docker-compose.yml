@@ -1,0 +1,31 @@
+version: '3'
+services:
+  go:
+    network_mode: host
+    container_name: snippetreviews
+    build: ./docker/golang
+    volumes:
+      - ./:/go/src/snippetreviews
+    working_dir: /go/src/snippetreviews
+    command: go run ./cmd/web
+    environment:
+      - SR_MYSQL=mysql
+      - SR_MYSQL_DATABASE=snippetreviews
+    ports:
+      - "4000"
+    depends_on:
+      - mysql
+  mysql:
+    network_mode: host
+    container_name: mysql-snippetreviews
+    build: ./docker/mysql
+    environment:
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_DATABASE: snippetreviews
+    ports:
+      - "3306"
+    volumes:
+      - volume-mysql-snippetreviews:/vol/mysql
+volumes:
+  volume-mysql-snippetreviews:
