@@ -20,8 +20,8 @@ type application struct {
 }
 
 func main() {
-
-	dsn := flag.String("dsn", "root:pass@tcp(localhost:3306)/snippetreviews?parseTime=true", "MySQL Data source name")
+	database := os.Getenv("SR_MYSQL")
+	dsn := flag.String("dsn", "root:pass@tcp("+database+":3306)/snippetreviews?parseTime=true", "MySQL Data source name")
 	addr := flag.String("addr", ":4000", "HTTP network address")
 	flag.Parse()
 
