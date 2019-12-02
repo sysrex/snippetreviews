@@ -46,10 +46,5 @@ pipeline {
                 sh 'docker-compose down'    
             }            
         }
-    post {
-        always {
-            deleteDir()
-            }
-        }
     }
 }
