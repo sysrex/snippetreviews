@@ -26,7 +26,12 @@ pipeline {
         stage('Push') {
             steps {                 
                 script {
-                    sh 'docker push snippetreviews_go:latest'
+                    docker.withRegistry('https://hub.docker.com', 'dockerhub') {
+
+                    def customImage = snippetreviews_go:latest
+
+                    /* Push the container to the custom Registry */
+                    customImage.push()
                 }
             }
         }      
