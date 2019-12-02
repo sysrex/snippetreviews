@@ -20,7 +20,7 @@ pipeline {
         stage('Push') {
             steps {                 
                 script {
-                    docker.withRegistry('https://hub.docker.com/sysrex/snippetreviews', '0448bc08-3391-4a48-b70f-44e9348c6aaf') {
+                    docker.withRegistry('https://hub.docker.com', '0448bc08-3391-4a48-b70f-44e9348c6aaf') {
                     sh 'docker tag snippetreviews_go:latest sysrex/snippterviews_go:tag'
                     def customImage = "sysrex/snippterviews_go:tag"
                     customImage.push()
