@@ -1,5 +1,5 @@
 # Snippet Reviews system
-[(https://ci.alexkiss.dev/job/snippetreviews/badge/icon?style=flat-square)](https://ci.alexkiss.dev/job/snippetreviews/)
+[![Build Status](https://ci.alexkiss.dev/buildStatus/icon?job=snippetreviews)](https://ci.alexkiss.dev/job/snippetreviews/)
 
 
 TODO:
