@@ -48,9 +48,8 @@ pipeline {
         }
     post {
         always {
-            // Clean up our workspace.
             deleteDir()
+            }
         }
-    }
     }
 }
