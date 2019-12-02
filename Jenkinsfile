@@ -24,6 +24,7 @@ pipeline {
                     sh 'docker tag snippetreviews_go:latest sysrex/snippterviews_go:tag'
                     def customImage = "sysrex/snippterviews_go:tag"
                     customImage.push()
+                    }
                 }
             }
         }      
