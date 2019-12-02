@@ -7,7 +7,6 @@ pipeline {
     }
 
     agent any    
-    // If anything fails, the whole Pipeline stops.
     
     stages {
         stage('Cloning Git') {
@@ -29,8 +28,6 @@ pipeline {
                     docker.withRegistry('https://hub.docker.com', 'dockerhub') {
 
                     def customImage = snippetreviews_go:latest
-
-                    /* Push the container to the custom Registry */
                     customImage.push()
                 }
             }
