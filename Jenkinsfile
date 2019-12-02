@@ -1,11 +1,6 @@
 #!/usr/bin/env groovy
 pipeline {
 
-    environment {
-    registry = "sysrex/snippetreviews"
-    registryCredential = 'dockerhub'
-    }
-
     agent any    
     
     stages {
@@ -50,7 +45,6 @@ pipeline {
                 sh 'docker-compose down'    
             }            
         }
-    }
     post {
         always {
             // Clean up our workspace.
