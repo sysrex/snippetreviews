@@ -1,14 +1,13 @@
 #!/usr/bin/env groovy
 pipeline {
 
-    checkout scm
-
     agent any    
     
     stages {
 
         stage('Build & Test') {   
-            steps {                                           
+            steps {  
+                checkout scm                                         
                 sh 'docker-compose build'
                 sh 'docker-compose up -d'           
             }            
