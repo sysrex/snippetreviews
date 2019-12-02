@@ -1,62 +1,43 @@
 #!/usr/bin/env groovy
-// The above line is used to trigger correct syntax highlighting.
-
 pipeline {
-    // Lets Jenkins use Docker for us later.
+
+    environment {
+    registry = "sysrex/snippetreviews"
+    registryCredential = 'dockerhub'
+    }
+
     agent any    
-
     // If anything fails, the whole Pipeline stops.
+    
     stages {
+        stage('Cloning Git') {
+            steps {
+                git 'https://github.com/sysrex/snippetreviews.git'
+            }
+        }
+
         stage('Build & Test') {   
-            // Use golang.
-            agent { docker { image 'golang:latest' } }
-
             steps {                                           
-                // Create our project directory.
-                sh 'cd ${GOPATH}/src'
-                sh 'mkdir -p ${GOPATH}/src/MY_PROJECT_DIRECTORY'
-
-                // Copy all files in our Jenkins workspace to our project directory.                
-                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/MY_PROJECT_DIRECTORY'
-
-                // Copy all files in our "vendor" folder to our "src" folder.
-                sh 'cp -r ${WORKSPACE}/vendor/* ${GOPATH}/src'
-
-                // Build the app.
-                sh 'go build'               
+                sh 'docker-compose build'
+                sh 'docker-compose up -d'           
             }            
         }
 
-        stage('Test') {
-            // Use golang.
-            agent { docker { image 'golang:latest' } }
-
+        stage('Push') {
             steps {                 
-                // Create our project directory.
-                sh 'cd ${GOPATH}/src'
-                sh 'mkdir -p ${GOPATH}/src/MY_PROJECT_DIRECTORY'
-
-                // Copy all files in our Jenkins workspace to our project directory.                
-                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/MY_PROJECT_DIRECTORY'
-
-                // Copy all files in our "vendor" folder to our "src" folder.
-                sh 'cp -r ${WORKSPACE}/vendor/* ${GOPATH}/src'
-
-                // Remove cached test results.
-                sh 'go clean -cache'
-
-                // Run Unit Tests.
-                sh 'go test ./... -v -short'            
+                script {
+                    docker.build registry + ":$BUILD_NUMBER"
+                }
             }
         }      
 
-        stage('Docker') {         
+        stage('Deploy') {         
             environment {
                 // Extract the username and password of our credentials into "DOCKER_CREDENTIALS_USR" and "DOCKER_CREDENTIALS_PSW".
                 // (NOTE 1: DOCKER_CREDENTIALS will be set to "your_username:your_password".)
                 // The new variables will always be YOUR_VARIABLE_NAME + _USR and _PSW.
                 // (NOTE 2: You can't print credentials in the pipeline for security reasons.)
-                DOCKER_CREDENTIALS = credentials('my-docker-credentials-id')
+                DOCKER_CREDENTIALS = credentials('dockerhub')
             }
 
             steps {                           
@@ -87,8 +68,15 @@ pipeline {
                 }
             }
         }
-    }
+        stage('Cleanup') {   
+            // Use golang.
+            agent { docker { image 'golang:latest' } }
 
+            steps {                                           
+                sh 'docker-compose down'    
+            }            
+        }
+    }
     post {
         always {
             // Clean up our workspace.
