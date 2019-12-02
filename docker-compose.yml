@@ -1,8 +1,7 @@
 version: '3'
 services:
   go:
-    network_mode: host
-    container_name: snippetreviews
+    container_name: go-snippetreviews
     build: ./docker/golang
     volumes:
       - ./:/go/src/snippetreviews
@@ -12,20 +11,30 @@ services:
       - SR_MYSQL=mysql
       - SR_MYSQL_DATABASE=snippetreviews
     ports:
-      - "4000"
+      - "4000:4000"
     depends_on:
       - mysql
+    networks:
+      - snippetreviews
   mysql:
-    network_mode: host
     container_name: mysql-snippetreviews
     build: ./docker/mysql
+    healthcheck:
+      test: ["CMD-SHELL", 'mysql --database=$$MYSQL_DATABASE --password=$$MYSQL_ROOT_PASSWORD --execute="SELECT count(table_name) > 0 FROM information_schema.tables;" --skip-column-names -B']
+      interval: 30s
+      timeout: 10s
+      retries: 4
     environment:
       MYSQL_USER: root
       MYSQL_ROOT_PASSWORD: pass
       MYSQL_DATABASE: snippetreviews
     ports:
-      - "3306"
+      - "3306:3306"
+    networks:
+      - snippetreviews
     volumes:
       - volume-mysql-snippetreviews:/vol/mysql
+networks:
+  snippetreviews:
 volumes:
   volume-mysql-snippetreviews:
